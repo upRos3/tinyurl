@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-</head>
-<body>
-  <% include ./partials/_header %>
-  <ul>
-  <% for (let obj in urls) {%>
-    <li><%= obj %> <%= urls[obj] %> <form method="POST" action="/urls/<%= obj %>/delete">
-    <button type="delete" value="Delete">Delete</button>
-  </form></li>
-  <% }; %>
-
-  </ul>
-</body>
+  <head>
+  </head>
+  <body>
+    <% include ./partials/_header %>
+    <ul>
+      <% for (let obj in urls) {%>
+      <li>
+      <%= obj %>    &rarr;    <%= urls[obj] %> <a href="/urls/<%= obj %>">Edit</a>
+      <form style="display: inline-block" method="POST" action="/urls/<%= obj %>/delete">
+        <button style="display: inline-block" type="delete" value="Delete">Delete</button>
+      </form>
+    </li>
+      <% }; %>
+    </ul>
+  </body>
 </html>
