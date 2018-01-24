@@ -57,7 +57,8 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.post("/urls", (req, res) => {
-  urlDatabase[generateRandomString()] = req.body.longURL;
-  console.log(urlDatabase);
+  let tinyURL = generateRandomString();
+  urlDatabase[tinyURL] = req.body.longURL;
+  res.redirect(`/urls/${tinyURL}`);
 });
 
