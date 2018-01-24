@@ -19,8 +19,6 @@ let urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-console.log(urlDatabase);
-
 app.get("/", (req, res) => {
   res.end("Hello!");
 });
@@ -62,3 +60,8 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${tinyURL}`);
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  let longURL = urlDatabase[req.params.shortURL];
+  console.log(longURL);
+  res.redirect(longURL);
+});
