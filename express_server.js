@@ -45,6 +45,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id,
                        urlDatabase: urlDatabase };
@@ -54,14 +55,36 @@ app.get("/urls/:id", (req, res) => {
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
+// Interaction:
+
+// Creates short URL
+
 app.post("/urls", (req, res) => {
   let tinyURL = generateRandomString();
   urlDatabase[tinyURL] = req.body.longURL;
   res.redirect(`/urls/${tinyURL}`);
 });
 
+// Short URL redirect
+
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
-  console.log(longURL);
   res.redirect(longURL);
+});
+
+// Deletes data
+
+app.post("/urls/:id/delete", (req, res) => {
+  let toDelete = req.params.id;
+  delete urlDatabase[toDelete];
+  res.redirect('/urls');
+});
+
+// Updates data
+
+app.post("/urls/:id/update", (req, res) => {
+  let updated = req.params.id;
+  urlDatabase[updated] = req.body.longURL;
+  res.redirect(`/urls/${updated}`);
+  console.log(urlDatabase);
 });

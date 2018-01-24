@@ -4,9 +4,10 @@
 </head>
 <body>
   <% include ./partials/_header %>
-  <ul>
-    <li><%= shortURL %></li>
-    <li><%= urlDatabase[shortURL] %></li>
-  </ul>
+  <h2>ShortURL: <b><%= shortURL %></b></h2>
+    <form method="POST" action="/urls/<%= shortURL %>/update">
+      <input id="longURL" type="text" name="longURL" placeholder="<%= urlDatabase[shortURL] %>" style="width: 300px">
+      <button type="update" value="Update">Update</button>
+    </form>
 </body>
 </html>
