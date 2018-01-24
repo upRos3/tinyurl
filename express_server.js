@@ -19,6 +19,8 @@ let urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+console.log(urlDatabase);
+
 app.get("/", (req, res) => {
   res.end("Hello!");
 });
@@ -55,7 +57,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  urlDatabase[generateRandomString()] = req.body.longURL;
+  console.log(urlDatabase);
 });
 
