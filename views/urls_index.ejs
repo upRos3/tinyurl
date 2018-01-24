@@ -6,8 +6,11 @@
   <% include ./partials/_header %>
   <ul>
   <% for (let obj in urls) {%>
-    <li><%= obj %> <%= urls[obj] %></li>
+    <li><%= obj %> <%= urls[obj] %> <form method="POST" action="/urls/<%= obj %>/delete">
+    <button type="delete" value="Delete">Delete</button>
+  </form></li>
   <% }; %>
+
   </ul>
 </body>
 </html>
