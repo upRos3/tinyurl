@@ -64,7 +64,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[tinyURL] = req.body.longURL;
   res.redirect(`/urls/${tinyURL}`);
 });
-
+5
 // Short URL redirect
 
 app.get("/u/:shortURL", (req, res) => {
@@ -86,5 +86,12 @@ app.post("/urls/:id/update", (req, res) => {
   let updated = req.params.id;
   urlDatabase[updated] = req.body.longURL;
   res.redirect(`/urls/${updated}`);
-  console.log(urlDatabase);
+});
+
+// Handles cookies
+
+app.post("/login", (req, res) => {
+  let user = req.body.username;
+  res.cookie('username', user);
+  res.redirect('/urls');
 });
