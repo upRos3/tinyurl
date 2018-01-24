@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <% include ./partials/_header %>
 </head>
 <body>
+  <% include ./partials/_header %>
   <ul>
     <li><%= shortURL %></li>
-    <li><%=  urlDatabase[shortURL] %></li>
+    <li><%= urlDatabase[shortURL] %></li>
   </ul>
 </body>
 </html>
