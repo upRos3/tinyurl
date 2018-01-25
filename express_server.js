@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 function generateRandomString() {
   let randomSt = '';
@@ -11,6 +13,13 @@ function generateRandomString() {
   return randomSt;
 }
 
+// const emptyUserame = (req) => {
+//   if (req.cookies['username'] === undefined) {
+//     return "empty";
+//   } else {
+//     return req.cookies['username'];
+//   }
+// };
 
 app.set("view engine", "ejs");
 
@@ -41,14 +50,19 @@ app.listen(PORT, () => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { urls: urlDatabase,
+                       username: req.cookies['username']
+                     };
   res.render("urls_index", templateVars);
 });
 
 
 app.get("/urls/:id", (req, res) => {
+  console.log(req.cookies);
   let templateVars = { shortURL: req.params.id,
-                       urlDatabase: urlDatabase };
+                       urlDatabase: urlDatabase,
+                       username: req.cookies['username']
+                     };
   res.render("urls_show", templateVars);
 });
 
@@ -64,7 +78,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[tinyURL] = req.body.longURL;
   res.redirect(`/urls/${tinyURL}`);
 });
-5
+
 // Short URL redirect
 
 app.get("/u/:shortURL", (req, res) => {
@@ -95,3 +109,4 @@ app.post("/login", (req, res) => {
   res.cookie('username', user);
   res.redirect('/urls');
 });
+
