@@ -13,14 +13,6 @@ function generateRandomString() {
   return randomSt;
 }
 
-// const emptyUserame = (req) => {
-//   if (req.cookies['username'] === undefined) {
-//     return "empty";
-//   } else {
-//     return req.cookies['username'];
-//   }
-// };
-
 app.set("view engine", "ejs");
 
 let urlDatabase = {
@@ -109,6 +101,8 @@ app.post("/login", (req, res) => {
   res.cookie('username', user);
   res.redirect('/urls');
 });
+
+// Logout
 
 app.post("/logout", (req, res) => {
   res.clearCookie('username');
