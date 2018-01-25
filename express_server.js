@@ -126,12 +126,34 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   let userId = generateRandomString();
-  users[userId] = { id: userId,
-                    email: req.body.email,
-                    password: req.body.password
-                  };
-  console.log(users);
+  let email = req.body.email;
+  let password = req.body.password;
+
+
+// Searches for invalid registration
+
+  if (!email) {
+    res.status(400).send('There is no email address!');
+  }
+
+  if (!password) {
+    res.status(400).send('There is no password!');
+  }
+
+
+  for (let email in users[userId]) {
+    if (email === users[userId]) {
+      res.status(400).send('Email already exists');
+    }
+  }
+    users[userId] = { id: userId,
+                      email: req.body.email,
+                      password: req.body.password
+                    };
+
+
   res.cookie('userId', users[userId].id);
+  console.log(users);
   res.redirect('/urls');
 });
 
