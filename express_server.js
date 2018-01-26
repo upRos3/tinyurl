@@ -18,8 +18,8 @@ function generateRandomString() {
 const users = {
   'userRandomID': {
     id: 'userRandomID',
-    email: 'user@example.com',
-    password: 'purple-monkey-dinosaur'
+    email: 'test@test',
+    password: 'test'
   },
  'user2RandomID': {
     id: 'user2RandomID',
@@ -44,7 +44,10 @@ app.get('/urls.json', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  let templateVars = { user: req.cookies['userId']};
+  let templateVars = { user: users[req.cookies['userId']]};
+  if (!req.cookies['userId']) {
+    res.redirect('/login')
+  }
   res.render('urls_new', templateVars);
 });
 
