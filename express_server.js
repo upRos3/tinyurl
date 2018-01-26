@@ -13,6 +13,13 @@ function generateRandomString() {
   }
   return randomSt;
 }
+
+// function urlsForUser(id) {
+//   for (let key of urlDatabase)
+//     console.log(userID);
+// }
+
+
 // ---Database start---
 
 const users = {
@@ -29,18 +36,28 @@ const users = {
 }
 
 const urlDatabase = {
-  'b2xVn2': {
+  'b2xVn2': { userID: 'userRandomID',
               long: 'http://www.lighthouselabs.ca'
             },
-  '9sm5xK': {
+  '9sm5xK': { userID: 'user2RandomID',
               long: 'http://www.google.com'
             }
 };
 
 // ---Database end ---
 
+let urlsForUser = function(userId) {
+  let obj = {};
+  console.log(userId);
+  for (let id in urlDatabase) {
+    if (urlDatabase[id].userID === userId) {
+      obj[id] = urlDatabase[id]
+    } console.log(obj);
+  } return obj;
+}
+
 app.get('/', (req, res) => {
-  res.end('Hello!');
+  res.redirect('/login');
 });
 
 app.get('/urls.json', (req, res) => {
@@ -67,11 +84,11 @@ app.listen(PORT, () => {
 // Shows all links
 
 app.get('/urls', (req, res) => {
-  let templateVars = { urls: urlDatabase,
+  let templateVars = { urls: urlsForUser(req.cookies['userId']),
                        user: users[req.cookies['userId']]
                      };
   if (!req.cookies['userId']) {
-    res.redirect('/login')
+    res.redirect('/login');
   }
   res.render('urls_index', templateVars);
 });
@@ -80,9 +97,16 @@ app.get('/urls', (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   let templateVars = { shortURL: req.params.id,
-                       urlDatabase: urlDatabase,
+                       urlDatabase: urlsForUser(req.cookies['userId']),
                        user: users[req.cookies['userId']]
                      };
+
+  if (!req.cookies['userId']) {
+    res.redirect('/login');
+  }
+  if (urlDatabase[req.params.id].userID !== req.cookies['userId']) {
+    res.status(401).send('Access Unauthorised');;
+  }
   res.render('urls_show', templateVars);
 });
 
@@ -95,10 +119,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.post('/urls', (req, res) => {
   let tinyURL = generateRandomString();
-  urlDatabase[tinyURL] = { long: req.body.longURL,
-                           userID: req.cookies['userId']
+  urlDatabase[tinyURL] = { userID: req.cookies['userId'],
+                           long: req.body.longURL
                          };
-                         console.log(urlDatabase);
+
   res.redirect(`/urls/${tinyURL}`);
 });
 
@@ -147,7 +171,6 @@ app.post('/login', (req, res) => {
   }
   res.clearCookie('userId');
   res.status(403).send('Username and password combination does not match')
-
 });
 
 // Registration
@@ -186,11 +209,13 @@ app.post('/register', (req, res) => {
 
   res.cookie('userId', users[userId].id);
   res.redirect('/urls');
+  console.log(users);
+  console.log(urlDatabase);
 });
 
 // Logout
 
 app.post('/logout', (req, res) => {
   res.clearCookie('userId');
-  res.redirect('/urls');
+  res.redirect('/');
 });

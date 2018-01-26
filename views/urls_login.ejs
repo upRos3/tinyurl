@@ -4,9 +4,9 @@
   <title></title>
 </head>
 <body>
- <!-- add if for redirect from a user not logged in explaining you must log in -->
+  <h1>Welcome to TinyApp!</h1>
   <form action="/login" method="POST" style="margin:150px;">
-    <h2>Please enter your login information:</h2>
+    <h2>To see your links, please enter your login information:</h2>
     <label for="email">Email:</label>
     <input id="email" type="email" name="email" placeholder="Email" style="width: 300px">
     <br /><br />
@@ -14,6 +14,7 @@
     <input id="password" type="password" name="password" placeholder="Password" style="width: 300px">
     <br /><br />
     <input type="submit" value="Submit">
+    <h3>Not a member yet? <a href="/register">Register here!</a></h3>
   </form>
 </body>
 </html>
