@@ -70,6 +70,9 @@ app.get('/urls', (req, res) => {
   let templateVars = { urls: urlDatabase,
                        user: users[req.cookies['userId']]
                      };
+  if (!req.cookies['userId']) {
+    res.redirect('/login')
+  }
   res.render('urls_index', templateVars);
 });
 
