@@ -7,7 +7,7 @@
     <ul>
       <% for (let obj in urls) {%>
       <li>
-      <%= obj %>    &rarr;    <%= urls[obj] %> <a href="/urls/<%= obj %>">Edit</a>
+      <%= obj %>    &rarr;    <%= urls[obj].long %> <a href="/urls/<%= obj %>">Edit</a>
       <form style="display: inline-block" method="POST" action="/urls/<%= obj %>/delete">
         <button style="display: inline-block" type="delete" value="Delete">Delete</button>
       </form>

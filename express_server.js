@@ -23,17 +23,21 @@ const users = {
   },
  'user2RandomID': {
     id: 'user2RandomID',
-    email: 'user2@example.com',
-    password: 'dishwasher-funk'
+    email: 'test2@test',
+    password: 'test'
   }
 }
 
 const urlDatabase = {
-  'b2xVn2': 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com'
+  'b2xVn2': {
+              long: 'http://www.lighthouselabs.ca'
+            },
+  '9sm5xK': {
+              long: 'http://www.google.com'
+            }
 };
 
-// ---Database start---
+// ---Database end ---
 
 app.get('/', (req, res) => {
   res.end('Hello!');
@@ -60,6 +64,8 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+// Shows all links
+
 app.get('/urls', (req, res) => {
   let templateVars = { urls: urlDatabase,
                        user: users[req.cookies['userId']]
@@ -67,11 +73,12 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+// Shows link information
 
 app.get('/urls/:id', (req, res) => {
   let templateVars = { shortURL: req.params.id,
                        urlDatabase: urlDatabase,
-                       user: req.cookies['userId']
+                       user: users[req.cookies['userId']]
                      };
   res.render('urls_show', templateVars);
 });
@@ -85,9 +92,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.post('/urls', (req, res) => {
   let tinyURL = generateRandomString();
-  urlDatabase[tinyURL] = req.body.longURL;
+  urlDatabase[tinyURL] = { long: req.body.longURL,
+                           userID: req.cookies['userId']
+                         };
+                         console.log(urlDatabase);
   res.redirect(`/urls/${tinyURL}`);
 });
+
+
 
 // Short URL redirect
 
@@ -167,7 +179,7 @@ app.post('/register', (req, res) => {
                       email: req.body.email,
                       password: req.body.password
                     };
-
+                    console.log(users);
 
   res.cookie('userId', users[userId].id);
   res.redirect('/urls');

@@ -6,7 +6,7 @@
   <% include ./partials/_header %>
   <h2>ShortURL: <b><%= shortURL %></b></h2>
     <form method="POST" action="/urls/<%= shortURL %>/update">
-      <input id="longURL" type="text" name="longURL" placeholder="<%= urlDatabase[shortURL] %>" style="width: 300px">
+      <input id="longURL" type="text" name="longURL" placeholder="<%= urlDatabase[shortURL].long %>" style="width: 300px">
       <button type="update" value="Update">Update</button>
     </form>
 </body>
