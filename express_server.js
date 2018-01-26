@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
+const password = "";
 app.use(cookieParser());
 app.set('view engine', 'ejs');
 
@@ -26,12 +28,12 @@ const users = {
   'userRandomID': {
     id: 'userRandomID',
     email: 'test@test',
-    password: 'test'
+    password: bcrypt.hashSync('test', 10)
   },
  'user2RandomID': {
     id: 'user2RandomID',
     email: 'test2@test',
-    password: 'test'
+    password: bcrypt.hashSync('test', 10)
   }
 }
 
@@ -45,6 +47,8 @@ const urlDatabase = {
 };
 
 // ---Database end ---
+
+// User filter for both data sets
 
 let urlsForUser = function(userId) {
   let obj = {};
@@ -182,7 +186,7 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   let userId = generateRandomString();
   let email = req.body.email;
-  let password = req.body.password;
+  let password = bcrypt.hashSync(req.body.password, 10);
 
 
 // Searches for invalid registration
