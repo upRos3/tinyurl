@@ -1,10 +1,15 @@
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const password = "";
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['dafj23djJ19IPa'],
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+
 app.set('view engine', 'ejs');
 
 function generateRandomString() {
@@ -52,24 +57,25 @@ let urlsForUser = function(userId) {
     }
   } return obj;
 }
-
+// Index
 app.get('/', (req, res) => {
   res.redirect('/login');
 });
 
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-});
+// Is there any need for this?
+// app.get('/urls.json', (req, res) => {
+//   res.json(urlDatabase);
+// });
 
 app.get('/urls/new', (req, res) => {
-  let templateVars = { user: users[req.cookies['userId']]};
-  if (!req.cookies['userId']) {
+  let templateVars = { user: users[req.session.userId]};
+  if (!req.session.userId) {
     res.redirect('/login')
   }
   res.render('urls_new', templateVars);
 });
 
-
+// Easter egg?
 app.get('/hello', (req, res) => {
   res.end('<html><body>Hello <b>World</b></body></html>\n')
 });
@@ -81,10 +87,10 @@ app.listen(PORT, () => {
 // Shows all links
 
 app.get('/urls', (req, res) => {
-  let templateVars = { urls: urlsForUser(req.cookies['userId']),
-                       user: users[req.cookies['userId']]
+  let templateVars = { urls: urlsForUser(req.session.userId),
+                       user: users[req.session.userId]
                      };
-  if (!req.cookies['userId']) {
+  if (!req.session.userId) {
     res.redirect('/login');
   }
   res.render('urls_index', templateVars);
@@ -94,18 +100,21 @@ app.get('/urls', (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   let templateVars = { shortURL: req.params.id,
-                       urlDatabase: urlsForUser(req.cookies['userId']),
-                       user: users[req.cookies['userId']]
+                       urlDatabase: urlsForUser(req.session.userId),
+                       user: users[req.session.userId]
                      };
 
-  if (!req.cookies['userId']) {
+  if (!req.session.userId) {
     res.redirect('/login');
   }
-  if (urlDatabase[req.params.id].userID !== req.cookies['userId']) {
+  if (urlDatabase[req.params.id].userID !== req.session.userId) {
     res.status(401).send('Access Unauthorised');;
   }
   res.render('urls_show', templateVars);
 });
+
+
+// Middleware to parse incoming request bodies
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
@@ -116,7 +125,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.post('/urls', (req, res) => {
   let tinyURL = generateRandomString();
-  urlDatabase[tinyURL] = { userID: req.cookies['userId'],
+  urlDatabase[tinyURL] = { userID: req.session.userId,
                            long: req.body.longURL
                          };
 
@@ -152,28 +161,41 @@ app.get('/login', (req, res) => {
   res.render('urls_login');
 })
 
-// Handles cookies
+// Login checks
 
 app.post('/login', (req, res) => {
+
+  // Filters emails
+  let emailBod = req.body.email;
   let findUserByEmail = function () {
     for (let userId in users) {
-      if (users[userId].email === req.body.email) {
+      if (users[userId].email === emailBod) {
         return users[userId];
       }
     }
   }
+  // Ensures that a falce ID by the findUserByEmail function can not continue
+  if (findUserByEmail() === undefined) {
+    req.session = null;
+    res.status(403).send('Username and password combination does not match');
+    return null;
+  }
 
-  let email = req.body.email;
   let pass = bcrypt.compareSync(req.body.password, findUserByEmail().password)
 
+ // Checks password
+
   if (pass === false) {
-    res.clearCookie('userId');
-    res.status(403).send('Username and password combination does not match')
+      req.session = null;
+      res.status(403).send('Username and password combination does not match')
+      return null;
   } else {
-    res.cookie('userId', findUserByEmail().id);
-    res.redirect('/urls');
+      req.session.userId = findUserByEmail().id;
+      res.redirect('/urls');
   }
 });
+
+// Registration process
 
 app.get('/register', (req, res) => {
   res.render('urls_register');
@@ -206,13 +228,13 @@ app.post('/register', (req, res) => {
                       password: password
                     };
 
-  res.cookie('userId', users[userId].id);
+  req.session.userId = users[userId].id;
   res.redirect('/urls');
 });
 
 // Logout
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('userId');
+  req.session = null;
   res.redirect('/');
 });
