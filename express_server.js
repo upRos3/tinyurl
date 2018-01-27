@@ -16,12 +16,6 @@ function generateRandomString() {
   return randomSt;
 }
 
-// function urlsForUser(id) {
-//   for (let key of urlDatabase)
-//     console.log(userID);
-// }
-
-
 // ---Database start---
 
 const users = {
@@ -52,11 +46,10 @@ const urlDatabase = {
 
 let urlsForUser = function(userId) {
   let obj = {};
-  console.log(userId);
   for (let id in urlDatabase) {
     if (urlDatabase[id].userID === userId) {
       obj[id] = urlDatabase[id]
-    } console.log(obj);
+    }
   } return obj;
 }
 
@@ -162,22 +155,25 @@ app.get('/login', (req, res) => {
 // Handles cookies
 
 app.post('/login', (req, res) => {
-  let email = req.body.email;
-  let pass = req.body.password
-
-
-  for (let user in users) {
-    if (users[user].email === email && users[user].password === pass) {
-      res.cookie('userId', users[user].id);
-      res.redirect('/urls');
-      return null;
+  let findUserByEmail = function () {
+    for (let userId in users) {
+      if (users[userId].email === req.body.email) {
+        return users[userId];
+      }
     }
   }
-  res.clearCookie('userId');
-  res.status(403).send('Username and password combination does not match')
-});
 
-// Registration
+  let email = req.body.email;
+  let pass = bcrypt.compareSync(req.body.password, findUserByEmail().password)
+
+  if (pass === false) {
+    res.clearCookie('userId');
+    res.status(403).send('Username and password combination does not match')
+  } else {
+    res.cookie('userId', findUserByEmail().id);
+    res.redirect('/urls');
+  }
+});
 
 app.get('/register', (req, res) => {
   res.render('urls_register');
@@ -207,14 +203,11 @@ app.post('/register', (req, res) => {
   }
     users[userId] = { id: userId,
                       email: req.body.email,
-                      password: req.body.password
+                      password: password
                     };
-                    console.log(users);
 
   res.cookie('userId', users[userId].id);
   res.redirect('/urls');
-  console.log(users);
-  console.log(urlDatabase);
 });
 
 // Logout
