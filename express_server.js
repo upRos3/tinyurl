@@ -59,7 +59,11 @@ let urlsForUser = function(userId) {
 }
 // Index
 app.get('/', (req, res) => {
-  res.redirect('/login');
+  if (!req.session.userId) {
+    res.redirect('/login')
+  } else {
+    res.redirect('/urls');
+  }
 });
 
 // Is there any need for this?
@@ -106,7 +110,7 @@ app.get('/urls/:id', (req, res) => {
 
   if (!req.session.userId) {
     res.redirect('/login');
-  }
+  } // Here is a problem with the logic. Stops registered user from updating link
   if (urlDatabase[req.params.id].userID !== req.session.userId) {
     res.status(401).send('Access Unauthorised');;
   }
@@ -174,6 +178,7 @@ app.post('/login', (req, res) => {
       }
     }
   }
+
   // Ensures that a falce ID by the findUserByEmail function can not continue
   if (findUserByEmail() === undefined) {
     req.session = null;
@@ -206,7 +211,7 @@ app.post('/register', (req, res) => {
   let email = req.body.email;
   let password = bcrypt.hashSync(req.body.password, 10);
 
-
+// Able to register under same email. Check logic
 // Searches for invalid registration
 
   if (!email) {
