@@ -12,6 +12,10 @@ app.use(cookieSession({
 
 app.set('view engine', 'ejs');
 
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
 function generateRandomString() {
   let randomSt = '';
   let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -34,13 +38,13 @@ const users = {
     email: 'test2@test',
     password: bcrypt.hashSync('test', 10)
   }
-}
+};
 
 const urlDatabase = {
-  'b2xVn2': { userID: 'userRandomID',
+  'b2xVn2': { userId: 'userRandomID',
               long: 'http://www.lighthouselabs.ca'
             },
-  '9sm5xK': { userID: 'user2RandomID',
+  '9sm5xK': { userId: 'user2RandomID',
               long: 'http://www.google.com'
             }
 };
@@ -52,11 +56,12 @@ const urlDatabase = {
 let urlsForUser = function(userId) {
   let obj = {};
   for (let id in urlDatabase) {
-    if (urlDatabase[id].userID === userId) {
+    if (urlDatabase[id].userId === userId) {
       obj[id] = urlDatabase[id]
     }
   } return obj;
 }
+
 // Index
 app.get('/', (req, res) => {
   if (!req.session.userId) {
@@ -66,26 +71,12 @@ app.get('/', (req, res) => {
   }
 });
 
-// Is there any need for this?
-// app.get('/urls.json', (req, res) => {
-//   res.json(urlDatabase);
-// });
-
 app.get('/urls/new', (req, res) => {
   let templateVars = { user: users[req.session.userId]};
   if (!req.session.userId) {
     res.redirect('/login')
   }
   res.render('urls_new', templateVars);
-});
-
-// Easter egg?
-app.get('/hello', (req, res) => {
-  res.end('<html><body>Hello <b>World</b></body></html>\n')
-});
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
 });
 
 // Shows all links
@@ -110,9 +101,12 @@ app.get('/urls/:id', (req, res) => {
 
   if (!req.session.userId) {
     res.redirect('/login');
-  } // Here is a problem with the logic. Stops registered user from updating link
+    return null;
+  }
+
   if (urlDatabase[req.params.id].userID !== req.session.userId) {
-    res.status(401).send('Access Unauthorised');;
+    res.status(401).send('Access Unauthorised');
+    return null;
   }
   res.render('urls_show', templateVars);
 });
@@ -136,13 +130,17 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${tinyURL}`);
 });
 
-
-
 // Short URL redirect
-
 app.get('/u/:shortURL', (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL].long;
-  res.redirect(longURL);
+  let shortURL = req.params.shortURL;
+  if (!urlDatabase[shortURL]) {
+    res.status(404).send('Link not found or no longer exists')
+    return null;
+  } else {
+  let longURL = urlDatabase[shortURL].long;
+  res.redirect(longURL)
+  }
+;
 });
 
 // Deletes data
@@ -156,16 +154,20 @@ app.post('/urls/:id/delete', (req, res) => {
 // Updates data
 
 app.post('/urls/:id/update', (req, res) => {
-  let updated = req.params.id;
-  urlDatabase[updated] = req.body.longURL;
-  res.redirect(`/urls/${updated}`);
+  let shortURL = req.params.id;
+  urlDatabase[shortURL].long = req.body.longURL;
+  res.redirect(`/urls/${shortURL}`);
 });
 
+// Login checks
+
 app.get('/login', (req, res) => {
+  if (req.session.userId) {
+    res.redirect('/urls');
+    return null;
+  }
   res.render('urls_login');
 })
-
-// Login checks
 
 app.post('/login', (req, res) => {
 
@@ -179,7 +181,7 @@ app.post('/login', (req, res) => {
     }
   }
 
-  // Ensures that a falce ID by the findUserByEmail function can not continue
+  // Ensures that a false ID by the findUserByEmail function can not continue
   if (findUserByEmail() === undefined) {
     req.session = null;
     res.status(403).send('Username and password combination does not match');
@@ -203,39 +205,49 @@ app.post('/login', (req, res) => {
 // Registration process
 
 app.get('/register', (req, res) => {
+  if (req.session.userId) {
+    res.redirect('/urls');
+    return null;
+  }
   res.render('urls_register');
 });
 
 app.post('/register', (req, res) => {
   let userId = generateRandomString();
   let email = req.body.email;
-  let password = bcrypt.hashSync(req.body.password, 10);
 
 // Able to register under same email. Check logic
 // Searches for invalid registration
 
   if (!email) {
     res.status(400).send('There is no email address!');
+    return null;
   }
+
+  let password = req.body.password;
 
   if (!password) {
     res.status(400).send('There is no password!');
+    return null;
   }
 
+  password = bcrypt.hashSync(req.body.password, 10);
 
-  for (let email in users[userId]) {
-    if (email === users[userId]) {
+  for (let key in users) {
+    if (email === users[key].email) {
       res.status(400).send('Email already exists');
+      return null;
     }
   }
     users[userId] = { id: userId,
                       email: req.body.email,
                       password: password
                     };
-
+console.log(users);
   req.session.userId = users[userId].id;
   res.redirect('/urls');
 });
+
 
 // Logout
 

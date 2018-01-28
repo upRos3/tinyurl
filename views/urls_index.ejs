@@ -3,17 +3,20 @@
   <head>
   </head>
   <body>
+    <body style="font-size:20px; padding:50px;">
     <% include ./partials/_header %>
-    <ul>
-    <% for (let obj in urls) {%>
-      <li>
-      <%= obj %>    &rarr;    <%= urls[obj].long %> <a href="/urls/<%= obj %>">Edit</a>
-      <form style="display: inline-block" method="POST" action="/urls/<%= obj %>/delete">
-        <button style="display: inline-block" type="delete" value="Delete">Delete</button>
-      </form>
-      </li>
-    <% }; %>
-    </ul>
-    <a href="/urls/new/">Click here to add more links</a>
+    <div style="margin:75px">
+      <ul>
+      <% for (let obj in urls) {%>
+        <li>
+        <%= obj %>    &rarr;    <%= urls[obj].long %> <a href="/urls/<%= obj %>" style="margin:40px">View / Edit</a>
+        <form style="display: inline-block" method="POST" action="/urls/<%= obj %>/delete">
+          <button style="display: inline-block" type="delete" value="Delete">Delete</button>
+        </form>
+        </li>
+      <% }; %>
+      </ul>
+      <a href="/urls/new/">Click here to add more links</a>
+    </div>
   </body>
 </html>
