@@ -12,6 +12,10 @@ app.use(cookieSession({
 
 app.set("view engine", "ejs");
 
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
 function generateRandomString() {
   let randomSt = "";
   let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -74,10 +78,6 @@ app.get("/urls/new", (req, res) => {
     res.redirect("/login");
   }
   res.render("urls_new", templateVars);
-});
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
 });
 
 // Shows all links
