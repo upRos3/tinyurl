@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>TinyApp</title>
 </head>
 <body>
   <body style="font-size:20px; padding:50px;">
   <% include ./partials/_header %>
   <div style="margin:75px">
-    <h2>ShortURL: <strong><a href="/u/<%= shortURL %>">http://localhost:8080/u/<%= shortURL %></a></strong></h2>
+    <h2>ShortURL: <strong><a href="/u/<%= shortURL %>" target="_blank">http://localhost:8080/u/<%= shortURL %></a></strong></h2>
       <form method="POST" action="/urls/<%= shortURL %>/update">
-        <input id="longURL" type="text" name="longURL" placeholder="<%= urlDatabase[shortURL].long %>" style="width: 300px">
+        <input id="longURL" type="text" name="longURL" placeholder="<%= urlDatabase[shortURL].long %>" style="width: 350px">
         <button type="update" value="Update">Update</button>
-        <p style='font-size:12px'>Friendly reminder: All links must have 'http://' at the start!</p>
+        <p style='font-size:12px'>Friendly reminder: All links must have 'http://' or 'https://' at the start!</p>
       </form>
       <br />
     <a href="/urls">Click here to go back to your links</a>
     <br />
     <a href="/urls/new/">Click here to add more links</a>
-  </div>>
+  </div>
 </body>
 </html>

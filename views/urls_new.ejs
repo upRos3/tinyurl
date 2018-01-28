@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head></head>
-  <body style="font-size:20px; padding:50px;">
-    <% include partials/_header %>
-    <form action="/urls" method="POST" style="margin:75px;">
-      <label for="longURL">Enter a URL:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="Please use http:// or https://" style="width: 300px">
-      <input type="submit" value="Submit">
-      <br /><br />
-      <a href="/urls">Go back to your links</a>
-    </form>
-  </body>
+<head>
+  <title>TinyApp</title>
+</head>
+<body style="font-size:20px; padding:50px;">
+  <% include partials/_header %>
+  <form action="/urls" method="POST" style="margin:75px;">
+    <label for="longURL">Enter a URL:</label>
+    <input id="longURL" type="text" name="longURL" placeholder="Please use http:// or https://" style="width: 300px">
+    <input type="submit" value="Submit">
+    <br /><br />
+    <a href="/urls">Go back to your links</a>
+  </form>
+</body>
 </html>
