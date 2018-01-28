@@ -31,7 +31,7 @@ With nodemon installed, execute 'npm start' in any folder within the repository 
 
 ## Versioning
 
-This is version 1.0.0. Unfortunatly due to time constraints, visually the web application is lacking, but I will be looking to update the app in future to not only add more functionality but also create a better and visually appealing UX.
+This is version 1.0.0. Unfortunatly due to time constraints, visually the web application is lacking, but I will be looking to update the app in the very near future to not only add more functionality but also create a more visually appealing UX.
 
 ## Screen shots
 
