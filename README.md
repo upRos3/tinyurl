@@ -8,8 +8,6 @@ Everything is ready to go. All you will need to run this application are the pre
 
 ### Prerequisites
 
-What things you need to install the software and how to install them:
-
 ```
 * Node.js
 * Express
