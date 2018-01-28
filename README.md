@@ -35,8 +35,9 @@ This is version 1.0.0. Unfortunatly due to time constraints, visually the web ap
 
 ## Screen shots
 
-!["Screenshot of main URLs page"]
-!["Screenshot of new linked page"]
+!["Screenshot of main URLs page"](https://github.com/upRos3/tinyurl/blob/master/docs/list-of-current-urls.png)
+!["Screenshot of link viewer and updater"](https://github.com/upRos3/tinyurl/blob/master/docs/update-and-link.png)
+!["Screenshot of URL creator"](https://github.com/upRos3/tinyurl/blob/master/docs/url-create.png)
 
 ## Authors
 
